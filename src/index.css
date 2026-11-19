@@ -1,0 +1,149 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Fraunces", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+  }
+
+  h1, h2, .font-display {
+    font-family: var(--font-display);
+  }
+}
+
+/* Official Google Sign-In Button Styling */
+.gsi-material-button {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -webkit-appearance: none;
+  background-color: #ffffff;
+  background-image: none;
+  border: 1px solid #747775;
+  -webkit-border-radius: 4px;
+  border-radius: 6px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  color: #1f1f1f;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  height: 36px;
+  letter-spacing: 0.15px;
+  outline: none;
+  overflow: hidden;
+  padding: 0 12px;
+  position: relative;
+  text-align: center;
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  vertical-align: middle;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gsi-material-button .gsi-material-button-icon {
+  height: 18px;
+  margin-right: 10px;
+  min-width: 18px;
+  width: 18px;
+}
+
+.gsi-material-button .gsi-material-button-content-wrapper {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  height: 100%;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+}
+
+.gsi-material-button:hover {
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+  background-color: #f8fafc;
+}
+
+.gsi-material-button:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+/* Subtle compositor-only breathing animation for active Agent Activity / Handoff Trace threads */
+@keyframes handoff-aura-breathe {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.997);
+  }
+  50% {
+    opacity: 0.68;
+    transform: scale(1.003);
+  }
+}
+
+@keyframes handoff-node-breathe {
+  0%,
+  100% {
+    opacity: 0.86;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.018);
+  }
+}
+
+@keyframes handoff-rail-breathe {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.98;
+  }
+}
+
+.handoff-trace-aura {
+  background: radial-gradient(
+    110% 95% at 18% 0%,
+    rgba(245, 158, 11, 0.16) 0%,
+    rgba(217, 119, 6, 0.07) 48%,
+    rgba(15, 23, 42, 0) 100%
+  );
+  will-change: opacity, transform;
+  animation: handoff-aura-breathe 3.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.handoff-node-breathing {
+  will-change: opacity, transform;
+  animation: handoff-node-breathe 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.handoff-rail-breathing {
+  will-change: opacity;
+  animation: handoff-rail-breathe 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .handoff-trace-aura,
+  .handoff-node-breathing,
+  .handoff-rail-breathing {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .handoff-trace-aura {
+    opacity: 0.32;
+  }
+}
+

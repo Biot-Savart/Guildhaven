@@ -1,0 +1,6 @@
+{
+  "name": "Gemini AI Village",
+  "description": "An interactive 2.5D RPG command village where your Gemini-powered Chief of Staff, Directors, and Workers collaborate across Gmail, Google Calendar, and Google Search.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
