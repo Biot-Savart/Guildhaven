@@ -1719,6 +1719,150 @@ export const VillageCanvas: React.FC<VillageCanvasProps> = ({
       ctx.arc(termX, termY, 18, 0, Math.PI * 2);
       ctx.fill();
 
+      // 4b. Live Real-Time Town Hall Tower Clock (aligned to sculpted brass bezel)
+      {
+        const clockX = WORLD_WIDTH * 0.50593;
+        const clockY = WORLD_HEIGHT * 0.16274;
+        const clockR = WORLD_WIDTH * 0.0176;
+
+        const nowDate = new Date();
+        const smoothSec = nowDate.getSeconds() + nowDate.getMilliseconds() / 1000;
+        const minVal = nowDate.getMinutes() + smoothSec / 60;
+        const hrVal = (nowDate.getHours() % 12) + minVal / 60;
+
+        const hrAngle = (hrVal / 12) * Math.PI * 2 - Math.PI / 2;
+        const minAngle = (minVal / 60) * Math.PI * 2 - Math.PI / 2;
+        const secAngle = (smoothSec / 60) * Math.PI * 2 - Math.PI / 2;
+
+        ctx.save();
+
+        // Warm antique gilded-parchment dial face blending seamlessly into outer brass bezel
+        const dialGrad = ctx.createRadialGradient(
+          clockX - clockR * 0.25,
+          clockY - clockR * 0.28,
+          clockR * 0.08,
+          clockX,
+          clockY,
+          clockR
+        );
+        dialGrad.addColorStop(0, '#d8b26e');
+        dialGrad.addColorStop(0.58, '#b98b45');
+        dialGrad.addColorStop(0.88, '#8b6025');
+        dialGrad.addColorStop(1, '#5a3912');
+
+        ctx.fillStyle = dialGrad;
+        ctx.beginPath();
+        ctx.arc(clockX, clockY, clockR, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Recessed inner bezel ring & subtle chapter track
+        ctx.strokeStyle = 'rgba(66, 36, 8, 0.85)';
+        ctx.lineWidth = 1.9;
+        ctx.beginPath();
+        ctx.arc(clockX, clockY, clockR - 0.6, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.strokeStyle = 'rgba(74, 44, 12, 0.34)';
+        ctx.lineWidth = 0.85;
+        ctx.beginPath();
+        ctx.arc(clockX, clockY, clockR * 0.82, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // 12 hour markers (bolder cardinal marks at 12, 3, 6, 9)
+        ctx.lineCap = 'round';
+        for (let h = 0; h < 12; h++) {
+          const ang = (h / 12) * Math.PI * 2 - Math.PI / 2;
+          const isCardinal = h % 3 === 0;
+          const innerR = clockR * (isCardinal ? 0.64 : 0.72);
+          const outerR = clockR * 0.87;
+          ctx.strokeStyle = isCardinal ? '#2b1806' : '#45280c';
+          ctx.lineWidth = isCardinal ? 2.1 : 1.3;
+          ctx.beginPath();
+          ctx.moveTo(clockX + Math.cos(ang) * innerR, clockY + Math.sin(ang) * innerR);
+          ctx.lineTo(clockX + Math.cos(ang) * outerR, clockY + Math.sin(ang) * outerR);
+          ctx.stroke();
+        }
+
+        // Helper to draw a tapered wrought-iron clock hand with soft 2.5D shadow
+        const drawTaperedHand = (
+          angle: number,
+          length: number,
+          tail: number,
+          baseWidth: number,
+          color: string
+        ) => {
+          ctx.save();
+          ctx.translate(clockX, clockY);
+          ctx.rotate(angle);
+
+          // Soft shadow cast onto parchment face
+          ctx.fillStyle = 'rgba(36, 18, 4, 0.35)';
+          ctx.beginPath();
+          ctx.moveTo(-tail + 1.1, -baseWidth * 0.5 + 1.3);
+          ctx.lineTo(length + 1.1, 1.3);
+          ctx.lineTo(-tail + 1.1, baseWidth * 0.5 + 1.3);
+          ctx.closePath();
+          ctx.fill();
+
+          // Main tapered hand
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.moveTo(-tail, -baseWidth * 0.55);
+          ctx.lineTo(length * 0.82, -baseWidth * 0.24);
+          ctx.lineTo(length, 0);
+          ctx.lineTo(length * 0.82, baseWidth * 0.24);
+          ctx.lineTo(-tail, baseWidth * 0.55);
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.restore();
+        };
+
+        // Hour hand & Minute hand
+        drawTaperedHand(hrAngle, clockR * 0.52, clockR * 0.16, 3.2, '#241304');
+        drawTaperedHand(minAngle, clockR * 0.74, clockR * 0.2, 2.3, '#1c0e03');
+
+        // Live crimson-bronze second hand
+        ctx.save();
+        ctx.translate(clockX, clockY);
+        ctx.rotate(secAngle);
+        ctx.strokeStyle = 'rgba(136, 24, 18, 0.92)';
+        ctx.lineWidth = 1.05;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(-clockR * 0.24, 0);
+        ctx.lineTo(clockR * 0.78, 0);
+        ctx.stroke();
+        ctx.restore();
+
+        // Center brass pivot boss
+        ctx.fillStyle = '#2b1605';
+        ctx.beginPath();
+        ctx.arc(clockX, clockY, 3.0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#f3cc73';
+        ctx.beginPath();
+        ctx.arc(clockX - 0.3, clockY - 0.3, 1.55, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Subtle curved sunlit glass reflection on top-left quadrant
+        ctx.fillStyle = 'rgba(255, 248, 220, 0.13)';
+        ctx.beginPath();
+        ctx.ellipse(
+          clockX - clockR * 0.26,
+          clockY - clockR * 0.3,
+          clockR * 0.42,
+          clockR * 0.22,
+          -0.65,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+
+        ctx.restore();
+      }
+
       // 5. Warm Candle-Flicker Street Lantern Halos
       LANTERN_POSITIONS.forEach(([nx, ny], idx) => {
         const lx = WORLD_WIDTH * nx;
@@ -3016,7 +3160,9 @@ export const VillageCanvas: React.FC<VillageCanvasProps> = ({
           <div className="flex items-center justify-between gap-2 text-xs">
             <span className="font-semibold text-white truncate">{bld.name}</span>
             <span className="text-[11px] text-slate-400 tabular-nums shrink-0">
-              {staffCount} staff
+              {bld.id === 'town_hall'
+                ? `${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · ${staffCount} staff`
+                : `${staffCount} staff`}
             </span>
           </div>
           <p className="text-[11px] text-slate-400 truncate">
